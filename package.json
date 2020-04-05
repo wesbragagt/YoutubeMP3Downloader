@@ -1,0 +1,12 @@
+{
+  "name": "YoutubeMP3Downloader",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/wesbragagt/YoutubeMP3Downloader.git",
+  "author": "weslley braga <wesbragagt@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "fluent-ffmpeg": "^2.1.2",
+    "youtube-dl": "^3.0.2"
+  }
+}
