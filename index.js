@@ -19,6 +19,9 @@ const video = youtubedl(url,
   })
 
 const proc = new ffmpeg({source:video})
+proc.audioBitrate(128)
+proc.audioCodec('libmp3lame')
+proc.audioQuality(0)
 proc.saveToFile(output)
 
 proc.on('error', (error) => console.error(error))
