@@ -1,36 +1,52 @@
-console.log('----YoutubeMP3 Download----')
-const fs = require('fs')
-const youtubedl = require('youtube-dl')
-const ffmpeg = require('fluent-ffmpeg')
-const bin = '/usr/local/bin/ffmpeg'
-const homeDir = require('os').homedir()
-const outputDir = `${homeDir}/Documents/tracks/`
-const url = process.argv[2]
-const audioFile = process.argv[3]
-const output = outputDir + audioFile
-const video = youtubedl(url,
-  // Optional arguments passed to youtube-dl.
-  ['--format=18'],
-  // Additional options can be given for calling `child_process.execFile()`.
-  { cwd: __dirname })
+console.log("----YoutubeMP3 Download----");
+const fs = require("fs");
+const homeDir = require("os").homedir();
+const outputDir = `${homeDir}/Music/Tracks/`;
+const url = process.argv[2];
+const audioFile = process.argv[3];
+const output = outputDir + audioFile;
+const YoutubeMp3Downloader = require("youtube-mp3-downloader");
+const cliProgress = require('cli-progress')
 
-  video.on('info', (info)=>{
-      console.log('Download started...')
-  })
+const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);if (!fs.existsSync(outputDir)) {
 
-const proc = new ffmpeg({source:video})
-proc.audioBitrate(128)
-proc.audioCodec('libmp3lame')
-proc.audioQuality(0)
-proc.saveToFile(output)
+  fs.mkdirSync(outputDir);
+}
+main();
 
-proc.on('error', (error) => console.error(error))
+function main() {
+  //Configure YoutubeMp3Downloader with your settings
+  const YD = new YoutubeMp3Downloader({
+    ffmpegPath: "/usr/local/bin/ffmpeg", // FFmpeg binary location
+    outputPath: outputDir,
+    youtubeVideoQuality: "highestaudio", // Desired video quality (default: highestaudio)
+    queueParallelism: 2, // Download parallelism (default: 1)
+    progressTimeout: 2000, // Interval in ms for the progress reports (default: 1000)
+    allowWebm: false, // Enable download from WebM sources (default: false)
+  });
 
-proc.on('end', ()=>{
-console.log(homeDir)
-console.log(`Done downloading ${audioFile} at ${homeDir}/Documents/tracks/${audioFile}`)
-})
+  //Download video and save as MP3 file
+  // YD.download("Vhd6Kc4TZls");
+  if (url && audioFile) {
+    const [_, videoId] = url.replace("\\", "").split("v=");
+    YD.download(videoId, audioFile);
+    console.log(`Downloading ${audioFile}...`)
+    progressBar.start(100, 0)
 
+    YD.on("progress", function ({ videoId, progress }) {
+      const { percentage } = progress;
+      progressBar.update(parseInt(percentage))
+    });
 
- 
-// video.pipe(fs.createWriteStream('video.mp4'))
+    YD.on("finished", function (err, data) {
+      progressBar.stop()
+      console.log(`Done. Downloaded ${output}`);
+    });
+
+    YD.on("error", function (error) {
+      progressBar.stop()
+      console.log(error);
+    });
+
+  }
+}
