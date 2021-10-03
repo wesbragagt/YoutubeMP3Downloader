@@ -5,10 +5,15 @@
   "repository": "https://github.com/wesbragagt/YoutubeMP3Downloader.git",
   "author": "weslley braga <wesbragagt@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "prebuild": "rm -rf dist/*",
+    "build": "nexe -i index.js -o dist/youtube-dw -t macos-10.13.0"
+  },
   "dependencies": {
     "cli-progress": "^3.9.1",
-    "fluent-ffmpeg": "^2.1.2",
-    "youtube-dl": "^3.0.2",
     "youtube-mp3-downloader": "^0.7.7"
+  },
+  "devDependencies": {
+    "nexe": "^4.0.0-beta.19"
   }
 }

@@ -1,0 +1,10 @@
+#! /usr/bin/env bash
+
+set -e
+
+rm -rf node_modules &&
+npm install &&
+npm run build &&
+cp dist/youtube-dw /usr/local/bin/ &&
+echo "Success installing youtube-dw. Run youtube-dw <url> <file_name>"
+
